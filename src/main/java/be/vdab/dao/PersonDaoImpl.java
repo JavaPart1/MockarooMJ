@@ -52,6 +52,22 @@ public class PersonDaoImpl implements PersonDao{
 
     @Override
     public void createPerson(Person nwPerson) throws SQLException {
+        String insert = "INSERT INTO person (id, first_name, last_name, email, gender, ip_address) " +
+                " VALUES (?, ?, ?, ?, ?, ?)";
+        try (
+                Connection con = getConnection();
+                PreparedStatement stmt = con.prepareStatement(insert)
+        ) {
+            stmt.setInt(1, nwPerson.getId());
+            stmt.setString(2, nwPerson.getFirstName());
+            stmt.setString(3, nwPerson.getLastName());
+            stmt.setString(4, nwPerson.getEmail());
+            stmt.setString(5, nwPerson.getGender());
+            stmt.setString(6, nwPerson.getIpAddress());
+            stmt.executeUpdate();
+        } catch (SQLException throwables) {
+            throw new SQLException(throwables);
+        }
 
     }
 
@@ -79,6 +95,16 @@ public class PersonDaoImpl implements PersonDao{
 
     @Override
     public void deletePerson(Person exPerson) throws SQLException {
+        String del = "DELETE person WHERE Id=?";
+        try (
+                Connection con = getConnection();
+                PreparedStatement stmt = con.prepareStatement(del)
+        ) {
+            stmt.setInt(1, exPerson.getId());
+            stmt.executeUpdate();
+        } catch (SQLException throwables) {
+            throw new SQLException(throwables);
+        }
 
     }
     private Connection getConnection() throws SQLException {
