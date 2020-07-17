@@ -10,11 +10,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static be.vdab.dao.JdbcPass.*;
+
 public class BitcoinApp {
     public static void main(String[] args) throws PersonException, SQLException {
         // Get person 1 & 2
         int person1Id = 5;
-        PersonDao personDao = new PersonDaoImpl(JdbcPass.getJDBCURL(),JdbcPass.getJDBCUSER(),JdbcPass.getPASSW());
+        PersonDao personDao = new PersonDaoImpl(JDBCURL,JDBCUSER,PASSW);
         Person person1 = personDao.getPersonById(person1Id);
 
         int person2Id = 15;

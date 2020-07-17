@@ -27,7 +27,7 @@ public class TestPayMethod {
             Person person1 = personDao.getPersonById(person1Id);
             // bitcoin account and dao
             ArrayList<BitcoinAccount> accList = new ArrayList<>();
-            BitAccDao accDao = new BitAccDaoImpl(JdbcPass.getJDBCURL(),JdbcPass.getJDBCUSER(),JdbcPass.getPASSW());
+            BitAccDao accDao = new BitAccDaoImpl(JDBCURL,JDBCUSER,PASSW);
             accList = accDao.getBitAccByOwner(person1.getId());
             BitcoinAccount personBitAcc = accList.get(0);// first account found
             balanceBefore = personBitAcc.getSaldo();
