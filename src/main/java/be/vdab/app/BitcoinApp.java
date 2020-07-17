@@ -6,7 +6,6 @@ import be.vdab.model.NotEnoughBalanceException;
 import be.vdab.model.Person;
 import be.vdab.model.PersonException;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -18,13 +17,15 @@ public class BitcoinApp {
         int person1Id = 5;
         PersonDao personDao = new PersonDaoImpl(JDBCURL,JDBCUSER,PASSW);
         Person person1 = personDao.getPersonById(person1Id);
+        System.out.println("Paying person : " + person1.getFirstName() + " " + person1.getLastName());
 
         int person2Id = 15;
         Person person2 = personDao.getPersonById(person2Id);
+        System.out.println("Receiving person : " + person2.getFirstName() + " " + person2.getLastName());
 
         // Get both persons bitcoinaccount(s)
         ArrayList<BitcoinAccount> accList = new ArrayList<>();
-        BitAccDao accDao = new BitAccDaoImpl(JdbcPass.getJDBCURL(),JdbcPass.getJDBCUSER(),JdbcPass.getPASSW());
+        BitAccDao accDao = new BitAccDaoImpl(JDBCURL,JDBCUSER,PASSW);
         // Account person 1
         accList = accDao.getBitAccByOwner(person1.getId());
         BitcoinAccount person1BitAcc = accList.get(0);// first account found
@@ -33,14 +34,17 @@ public class BitcoinApp {
         BitcoinAccount person2BitAcc = accList.get(0);// first account found
 
         // Pay 1000 € from person 1 to person 2
-        double paymentAmount = 1000;
+        double paymentAmount = 1000000;
+        System.out.println("Payment amount : " + paymentAmount);
+        System.out.println("BitcoinAccounts found");
         try {
-            // withdraw first bitcoin account
-            accDao.pay(person1BitAcc,paymentAmount);
-            // deposit second bitcoin account
-            accDao.receivePayment(person2BitAcc,paymentAmount);
+            // Execute payment
+            accDao.ExecutePaymentTxn(person1BitAcc,person2BitAcc,paymentAmount);
+            System.out.println("Payment executed");
         } catch (NotEnoughBalanceException e) {
+            System.out.println(e);
             e.printStackTrace();
+            System.out.println("Payment failed");
         }
 
     }

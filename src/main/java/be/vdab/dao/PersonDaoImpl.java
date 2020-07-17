@@ -23,7 +23,6 @@ public class PersonDaoImpl implements PersonDao{
                 Connection con = getConnection();
                 PreparedStatement stmt = con.prepareStatement(query)
         ) {
-            System.out.println("Connection ok");
             stmt.setInt(1, id);
             try (
                     ResultSet rs = stmt.executeQuery()

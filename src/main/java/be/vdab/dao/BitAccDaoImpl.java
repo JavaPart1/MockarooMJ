@@ -25,7 +25,6 @@ public class BitAccDaoImpl implements BitAccDao{
                 Connection con = getConnection();
                 PreparedStatement stmt = con.prepareStatement(query)
         ) {
-            System.out.println("Connection ok");
             stmt.setInt(1, id);
             try (
                     ResultSet rs = stmt.executeQuery()
@@ -81,7 +80,6 @@ public class BitAccDaoImpl implements BitAccDao{
                 Connection con = getConnection();
                 PreparedStatement stmt = con.prepareStatement(query)
         ) {
-            System.out.println("Connection ok");
             stmt.setInt(1, curBitAcc.getId());
             try (
                     ResultSet rs = stmt.executeQuery()
@@ -115,6 +113,9 @@ public class BitAccDaoImpl implements BitAccDao{
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        catch (NotEnoughBalanceException ex){
+            throw ex;
+        }
 
     }
 
@@ -131,13 +132,79 @@ public class BitAccDaoImpl implements BitAccDao{
     }
 
     @Override
+    public void ExecutePaymentTxn(BitcoinAccount payerAccount, BitcoinAccount receiverAccount, double amount)
+            throws NotEnoughBalanceException {
+        try {
+            //get balance inputaccount
+            double inbalance = this.getBalance(payerAccount);
+            // is balance enough?
+            if (inbalance>=amount){
+                System.out.println("Balance paying account is sufficient : " + inbalance);
+                // withdraw amount
+                payerAccount.setSaldo(payerAccount.getSaldo()-amount);
+                // deposit amount
+                receiverAccount.setSaldo(receiverAccount.getSaldo()+amount);
+                // update txn
+                updateTxnBitAcc(payerAccount,receiverAccount);
+            }else{
+                throw new NotEnoughBalanceException("Balance payee is too low : " + inbalance + " !");
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            System.out.println("Payment failed");
+        }
+        catch (NotEnoughBalanceException ex){
+            throw ex;
+        }
+
+    }
+
+    @Override
+    public void updateTxnBitAcc(BitcoinAccount payerAccount, BitcoinAccount receiverAccount) {
+        String update = "UPDATE bitcnacc SET bitcoin_address =?, saldo =?, credit_card_type=?" +
+                ", owner_id=? WHERE id=?";
+        try (Connection con = getConnection();){
+            try (
+                    PreparedStatement stmtPayer = con.prepareStatement(update);
+                    PreparedStatement stmtReceiver = con.prepareStatement(update)
+            ) {
+                // Txn settings
+                con.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+                con.setAutoCommit(false);
+                // Fill in SQL stmts
+                stmtPayer.setString(1, payerAccount.getBitcoinAddress());
+                stmtPayer.setDouble(2, payerAccount.getSaldo());
+                stmtPayer.setString(3, payerAccount.getCreditCardType());
+                stmtPayer.setInt(4, payerAccount.getOwnerId());
+                stmtPayer.setInt(5, payerAccount.getId());
+                stmtPayer.executeUpdate();
+                stmtReceiver.setString(1, receiverAccount.getBitcoinAddress());
+                stmtReceiver.setDouble(2, receiverAccount.getSaldo());
+                stmtReceiver.setString(3, receiverAccount.getCreditCardType());
+                stmtReceiver.setInt(4, receiverAccount.getOwnerId());
+                stmtReceiver.setInt(5, receiverAccount.getId());
+                stmtReceiver.executeUpdate();
+                con.commit();
+                con.setAutoCommit(true);
+            } catch (SQLException throwables) {
+                con.rollback();
+                System.out.println("rollback executed");
+                throw new SQLException(throwables);
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
+    @Override
     public ArrayList<BitcoinAccount> getBitAccByOwner(int id) throws SQLException {
         String query = "SELECT * FROM bitcnacc WHERE owner_id=?";
         try (
                 Connection con = getConnection();
                 PreparedStatement stmt = con.prepareStatement(query)
         ) {
-            System.out.println("Connection ok");
             stmt.setInt(1, id);
             try (
                     ResultSet rs = stmt.executeQuery()
