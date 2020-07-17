@@ -16,7 +16,7 @@ import static be.vdab.dao.JdbcPass.*;
 public class TestPayMethod {
 
     @Test
-    void testMeth() throws PersonException, SQLException, NotEnoughBalanceException {
+    void testPayMethod() throws PersonException, SQLException, NotEnoughBalanceException {
         int person1Id = 5;
         double paymentAmount = 1000;
         double balanceBefore;
@@ -37,6 +37,7 @@ public class TestPayMethod {
             balanceAfter = personBitAcc.getSaldo();
 
             // compare with DB
+            System.out.println("payment amount: "+paymentAmount);
             System.out.println("balance before pay : " + balanceBefore);
             System.out.println("balance after pay : " + balanceAfter);
             Assertions.assertNotEquals(balanceBefore,balanceAfter,"Balances are equal");

@@ -39,7 +39,7 @@ public class BitcoinApp {
         System.out.println("BitcoinAccounts found");
         try {
             // Execute payment
-            accDao.ExecutePaymentTxn(person1BitAcc,person2BitAcc,paymentAmount);
+            accDao.executePaymentTxn(person1BitAcc,person2BitAcc,paymentAmount);
             System.out.println("Payment executed");
         } catch (NotEnoughBalanceException e) {
             System.out.println(e);

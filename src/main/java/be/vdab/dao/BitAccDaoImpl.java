@@ -132,7 +132,7 @@ public class BitAccDaoImpl implements BitAccDao{
     }
 
     @Override
-    public void ExecutePaymentTxn(BitcoinAccount payerAccount, BitcoinAccount receiverAccount, double amount)
+    public void executePaymentTxn(BitcoinAccount payerAccount, BitcoinAccount receiverAccount, double amount)
             throws NotEnoughBalanceException {
         try {
             //get balance inputaccount

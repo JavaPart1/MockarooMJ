@@ -16,7 +16,7 @@ public interface BitAccDao {
     public double getBalance(BitcoinAccount curBitAcc) throws SQLException;
     public void pay(BitcoinAccount corBitAcc,double amount) throws NotEnoughBalanceException;
     public void receivePayment(BitcoinAccount corBitAcc,double amount);
-    public void ExecutePaymentTxn(BitcoinAccount payerAccount, BitcoinAccount receiverAccount, double amount) throws NotEnoughBalanceException;
+    public void executePaymentTxn(BitcoinAccount payerAccount, BitcoinAccount receiverAccount, double amount) throws NotEnoughBalanceException;
     public void updateTxnBitAcc(BitcoinAccount payerAccount,BitcoinAccount receiverAccount);
     public ArrayList<BitcoinAccount> getBitAccByOwner(int id) throws SQLException;
 
