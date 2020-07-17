@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static be.vdab.dao.JdbcPass.*;
+
 public class TestPayMethod {
 
     @Test
@@ -21,7 +23,7 @@ public class TestPayMethod {
         double balanceAfter;
         // Person and Dao
         try {
-            PersonDao personDao = new PersonDaoImpl(JdbcPass.getJDBCURL(),JdbcPass.getJDBCUSER(),JdbcPass.getPASSW());
+            PersonDao personDao = new PersonDaoImpl(JDBCURL,JDBCUSER,PASSW);
             Person person1 = personDao.getPersonById(person1Id);
             // bitcoin account and dao
             ArrayList<BitcoinAccount> accList = new ArrayList<>();
